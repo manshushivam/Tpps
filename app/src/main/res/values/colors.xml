@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="startColor">#f6b93b</color>
+    <color name="formatingColor">#38ada9</color>
+    <color name="printingColor">#4a69bd</color>
+    <color name="deliveredColor">#b71540</color>
+    <color name="defaultColor">#82ccdd</color>
+
+
+
+
+
+
+
+</resources>

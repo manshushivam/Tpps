@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "359750472972",
+    "project_id": "tpps-10b5b",
+    "storage_bucket": "tpps-10b5b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:359750472972:android:5d6ba77ecf71c1d141e529",
+        "android_client_info": {
+          "package_name": "com.example.tpps"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPZJtS4Ad-5Kukk9W_TUucysIE4FmQq6Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
