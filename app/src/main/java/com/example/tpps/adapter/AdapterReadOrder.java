@@ -200,15 +200,24 @@ public class AdapterReadOrder extends RecyclerView.Adapter<AdapterReadOrder.View
 
                     Drawable d = v.getContext().getDrawable(R.drawable.tpps_logo);
                     CreatePdf createPdf = new CreatePdf();
-                    File pdfFile = createPdf.generatePdf(v.getContext(), d, currentItem);
+                    File pdfPath = createPdf.generatePdf(v.getContext(), d, currentItem);
+                    Toast.makeText(v.getContext(), "File Created" + pdfPath , Toast.LENGTH_SHORT).show();
 
-                    Toast.makeText(v.getContext(), "File Created" + pdfFile , Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.parse(pdfPath.toString()), "application/pdf");
+                    // Ask the user to choose an app to open the PDF file
+                    Intent chooserIntent = Intent.createChooser(intent, "Open PDF with");
+                    // Verify that the intent will resolve to an activity
+                    if (v.getContext() != null && chooserIntent.resolveActivity(v.getContext().getPackageManager()) != null) {
+                        v.getContext().startActivity(chooserIntent);
+                    }
 
-                        //String pdfFileName = "your_pdf_file.pdf";
 
+//                    SendWhatsAppSMS whatsappSender = new SendWhatsAppSMS();
+//                    whatsappSender.sendPdfThroughWhatsApp(layoutInflater.getContext(), currentItem.getMobileNo(), pdfFile.getAbsolutePath());
+//                        //String pdfFileName = "your_pdf_file.pdf";
                         // Get the URI of the PDF file
-                        Uri pdfUri = Uri.parse("file:///android_asset/" + pdfFile);
-
+                        //Uri pdfUri = Uri.parse("file:///android_asset/" + pdfFile);
                         // Create an intent to view the PDF using DrivePDF Viewer
 //                        Intent intent = new Intent(Intent.ACTION_VIEW);
 //                        intent.setDataAndType(pdfUri, "application/pdf");

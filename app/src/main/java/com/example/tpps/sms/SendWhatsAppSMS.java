@@ -26,7 +26,6 @@ public class SendWhatsAppSMS {
 
     public void sendPdfThroughWhatsApp(Context context, String phoneNumber, String pdfPath) {
         try {
-            Toast.makeText(context, "1", Toast.LENGTH_SHORT).show();
             // Create a new Intent with the action SEND
             Intent sendIntent = new Intent("android.intent.action.SEND");
 
@@ -49,10 +48,9 @@ public class SendWhatsAppSMS {
 
             // Grant temporary read permission to the content URI
             sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            Toast.makeText(context, "2", Toast.LENGTH_SHORT).show();
+
             // Start the activity
             context.startActivity(sendIntent);
-            Toast.makeText(context, "3", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             // Handle exceptions, e.g., if WhatsApp is not installed
             Toast.makeText(context, "Error " + e.getMessage(), Toast.LENGTH_SHORT).show();

@@ -34,15 +34,15 @@ public class CreatePdf {
 
     public  File generatePdf(Context context , Drawable d, MoharDataModel order ) throws FileNotFoundException {
         try {
-            File pdfPath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),  order.getName()+"_"+order.getAddress()+"_.pdf");
+            File pdfPath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),  order.getName()+" "+order.getAddress()+".pdf");
 
 
             OutputStream outputStream = new FileOutputStream(pdfPath);
 
             PdfWriter writer = new PdfWriter(outputStream);
             PdfDocument pdfDocument = new PdfDocument(writer);
-//            PageSize halfA4 = new PageSize(PageSize.A4.getWidth() / 2, PageSize.A4.getHeight()/2);
-//            pdfDocument.setDefaultPageSize(halfA4);
+//          PageSize halfA4 = new PageSize(PageSize.A4.getWidth() / 2, PageSize.A4.getHeight()/2);
+//          pdfDocument.setDefaultPageSize(halfA4);
             Document document = new Document(pdfDocument);
 
 
@@ -61,8 +61,7 @@ public class CreatePdf {
             addHeader(document);
             addBody(document,order);
             document.close();
-            SendWhatsAppSMS whatsappSender = new SendWhatsAppSMS();
-            whatsappSender.sendPdfThroughWhatsApp(context, order.getMobileNo(), pdfPath.getAbsolutePath());
+
             return pdfPath;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -134,9 +133,9 @@ public class CreatePdf {
         PaidAmount.setFixedPosition(x,100f,PageSize.A4.getWidth());
         document.add(PaidAmount);
 
-        double totalAmount = Double.parseDouble(order.getTotalAmount());
-        double paidAmount = Double.parseDouble(order.getPaidAmount());
-        double dueAmount = totalAmount - paidAmount;
+        int totalAmount = Integer.parseInt(order.getTotalAmount());
+        int paidAmount = Integer.parseInt(order.getPaidAmount());
+        int dueAmount = totalAmount - paidAmount;
 
 
         Paragraph DueAmount = new Paragraph("Due Amount: Rs " + dueAmount);

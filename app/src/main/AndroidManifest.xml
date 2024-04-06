@@ -27,12 +27,6 @@
             android:name=".Activity.FullScreenPDFViwer"
             android:exported="false" />
         <activity
-            android:name=".addOrderTypes"
-            android:exported="false" />
-        <activity
-            android:name=".orderTypes_card"
-            android:exported="false" />
-        <activity
             android:name=".CreateOrderCalender"
             android:exported="false" />
         <activity
@@ -78,6 +72,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/pdf_paths" />
         </provider>
+
 
     </application>
 
