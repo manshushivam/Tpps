@@ -1,0 +1,126 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CreateOrder"
+    android:background="@drawable/background_ordertypes">
+
+    <Button
+        android:id="@+id/button_uploadImageCOT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Upload Image"
+        android:backgroundTint="@color/GreenOfLogo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.814"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.068" />
+
+
+    <ImageView
+        android:id="@+id/imageView_bigCOT"
+        android:layout_width="96dp"
+        android:layout_height="104dp"
+        android:src="@drawable/tpps_logo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.088"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.025"
+        tools:srcCompat="@drawable/tpps_logo" />
+
+
+    <TextView
+        android:id="@+id/textViewOrderType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Order Type:"
+        android:textColor="@color/BlueOfLogo"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.076"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.205" />
+
+    <RadioGroup
+        android:id="@+id/radioGroupOrderTypes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewOrderType"
+        android:orientation="vertical"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.037"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.704">
+
+        <RadioButton
+            android:id="@+id/radioButtonMohar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Standard Mohar"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/radioButtonSelfMohar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Self Ink Mohar"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/radioButtonVisitingCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Visiting Card"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/radioButtonShadiCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Shadi Card"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/radioButtonCalender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Calender"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/radioButtonBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Banner"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/radioButtonPoster"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Poster"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/radioButtonOther"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Others"
+            android:textSize="16sp" />
+
+    </RadioGroup>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

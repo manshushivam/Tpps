@@ -1,140 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".CreateOrder"
-    android:background="@color/white">
+    android:background="@drawable/background">
 
-    <Button
-        android:id="@+id/button_uplodImage"
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upload Image"
-        android:backgroundTint="#F9B572"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.814"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.068" />
+        android:layout_gravity="left"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="9dp"
+        android:text="Create Order"
+        android:textColor="@color/BlueOfLogo"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        />
 
-    <ImageView
-        android:id="@+id/imageView_big"
-        android:layout_width="96dp"
-        android:layout_height="104dp"
-        android:src="@drawable/tpps_logo"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.196"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.025"
-        tools:srcCompat="@drawable/tpps_logo" />
 
-    <EditText
-        android:id="@+id/editTextMultiLine_moharContent"
-        android:layout_width="270dp"
-        android:layout_height="129dp"
-        android:ems="10"
-        android:gravity="start|top"
-        android:hint=" Write Content "
-        android:elevation="0.5dp"
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:hint="Name"
+        app:startIconDrawable="@drawable/name"> <!-- Add your person icon -->
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/outlinedTextFieldNameCO"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:hint="Address"
+        app:startIconDrawable="@drawable/location"> <!-- Add your location icon -->
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/outlinedTextField_AddressCO"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:hint="Mobile No"
+        app:startIconDrawable="@drawable/call"> <!-- Add your phone icon -->
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/outlinedTextFieldMobileCO"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:layout_margin="8dp"
         android:inputType="textMultiLine"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.439"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.25" />
+        app:startIconDrawable="@drawable/notes_"
+        android:hint="Content">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/outlinedTextFieldContentCO"
+            android:layout_width="match_parent"
+            android:layout_height="105dp"
+            android:inputType="textMultiLine" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:orientation="horizontal">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Total Amount"
+            app:startIconDrawable="@drawable/currency_rupee">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/outlinedTextFieldTotalAmountCO"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:hint="Paid Amount"
+            app:startIconDrawable="@drawable/currency_rupee">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/outlinedTextFieldPaidAmountCO"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/button_submit"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="Submit"
-        android:backgroundTint="#99B080"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.446"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.874" />
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:backgroundTint="@color/GreenOfLogo"
+        android:text="Submit" />
 
-    <EditText
-        android:id="@+id/editText_mobileNumber_mohar"
-        android:layout_width="270dp"
-        android:layout_height="50dp"
-        android:ems="10"
-        android:hint="Customer Mobile NO"
-
-        android:inputType="number"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.432"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.43" />
-
-    <EditText
-        android:id="@+id/editText_totalAmountofMohar"
-        android:layout_width="270dp"
-        android:layout_height="50dp"
-        android:ems="10"
-        android:hint="Total Amount"
-        android:inputType="number"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.432"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.619" />
-
-    <EditText
-        android:id="@+id/editText_paidAmountofMohar"
-        android:layout_width="270dp"
-        android:layout_height="50dp"
-        android:ems="10"
-        android:hint="Paid Amount"
-        android:inputType="number"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.432"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.712" />
-
-    <Button
-        android:id="@+id/button_dateMohar"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/loadingLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Date"
-        android:backgroundTint="#F9B572"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.755"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.519" />
+        android:layout_marginTop="16dp"
+        android:gravity="center_horizontal"
+        android:visibility="visible">
 
-    <EditText
-        android:id="@+id/editText_dateMohar"
-        android:layout_width="155dp"
-        android:layout_height="50dp"
-        android:ems="10"
-        android:hint="Due Date"
-        android:inputType="number"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.242"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.521" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:indicatorSize="50dp" />
+    </LinearLayout>
+
+
+
+</LinearLayout>

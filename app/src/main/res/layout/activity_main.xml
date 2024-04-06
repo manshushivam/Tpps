@@ -7,6 +7,7 @@
     android:background="#f2dad6"
     tools:context=".MainActivity">
 
+
     <!--    <Button-->
 <!--        android:id="@+id/anyOrder_button"-->
 <!--        android:layout_width="wrap_content"-->
@@ -34,12 +35,33 @@
 <!--        app:layout_constraintTop_toTopOf="parent"-->
 <!--        app:layout_constraintVertical_bias="0.43" />-->
 
+
+    <TextView
+        android:id="@+id/textViewHeading"
+        android:layout_width="415dp"
+        android:layout_height="109dp"
+        android:layout_centerInParent="true"
+        android:text="Tarkeshwar Printing Press \n &amp; \n Stationery"
+        android:textAlignment="center"
+        android:fontFamily="@font/myfont"
+
+        android:textColor="#6B4B24"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:typeface="serif"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.047" />
+
     <Button
-        android:id="@+id/button_mohar"
+        android:id="@+id/button_createOrder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#C59D87"
-        android:text="Cash Memo"
+        android:text="Create Order"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.44"
@@ -48,11 +70,11 @@
         app:layout_constraintVertical_bias="0.294" />
 
     <Button
-        android:id="@+id/button_moharBook"
+        android:id="@+id/button_readOrder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#8faacd"
-        android:text="Order Book"
+        android:text="Read Order"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.44"
@@ -60,13 +82,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.428" />
 
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="wrap_content"
-        android:layout_height="150dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/first_banner_top" />
+
 
     <ImageView
         android:id="@+id/imageView8"

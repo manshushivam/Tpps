@@ -1,4 +1,4 @@
-package com.example.tpps;
+package com.example.tpps.sms;
 
 import android.content.Context;
 import android.telephony.SmsManager;

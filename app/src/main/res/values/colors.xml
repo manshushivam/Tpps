@@ -2,15 +2,14 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="startColor">#f6b93b</color>
-    <color name="formatingColor">#38ada9</color>
-    <color name="printingColor">#4a69bd</color>
-    <color name="deliveredColor">#b71540</color>
+    <color name="ComputerWork">#f6b93b</color>
+    <color name="PrintingWork">#0C2D57</color>
+    <color name="Deliver">#b71540</color>
     <color name="defaultColor">#82ccdd</color>
-
-
-
-
+    <color name="colorPrimaryDark">#1976D2</color>
+    <color name="GreenOfLogo">#3da558</color>
+    <color name="BlueOfLogo">#4982c7</color>
+    <color name="RedOfLogo">#f64524</color>
 
 
 

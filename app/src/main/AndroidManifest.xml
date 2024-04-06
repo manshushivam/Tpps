@@ -4,6 +4,10 @@
 
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature
         android:name="android.hardware.telephony"
@@ -20,27 +24,34 @@
         android:theme="@style/Theme.Tpps"
         tools:targetApi="31">
         <activity
-            android:name=".DeliveredItems"
+            android:name=".Activity.FullScreenPDFViwer"
             android:exported="false" />
         <activity
-            android:name=".FullScreenImageActivity"
-            android:exported="false" /> <!-- <activity -->
-        <!-- android:name=".card_items" -->
-        <!-- android:exported="false" /> -->
-        <activity
-            android:name=".MoharBook"
+            android:name=".addOrderTypes"
             android:exported="false" />
         <activity
-            android:name=".mohar"
+            android:name=".orderTypes_card"
             android:exported="false" />
         <activity
-            android:name=".anyOrder"
+            android:name=".CreateOrderCalender"
+            android:exported="false" />
+        <activity
+            android:name=".CreateOrderTypes"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.FullScreenImageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ReadOrder"
+            android:exported="false" />
+        <activity
+            android:name=".CreateOrder"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".Activity.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -58,6 +69,16 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.tpps.pdfprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/pdf_paths" />
+        </provider>
+
     </application>
 
 </manifest>

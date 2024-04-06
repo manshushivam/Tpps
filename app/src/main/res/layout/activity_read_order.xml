@@ -1,18 +1,172 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    >
+    android:background="@color/white">
+    <SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:iconifiedByDefault="false"
+        android:layout_marginStart="5dp"
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:inputType="number"
+        android:padding="1dp"
+        android:queryHint="Search by Mobile Number" />
+
+
+
+    <!-- HorizontalScrollView with RadioGroup for Stage 3 -->
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/searchView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="0dp"
+        >
+
+        <RadioGroup
+            android:id="@+id/radioGroupStage"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_below="@id/searchView"
+
+            android:orientation="horizontal"
+            android:paddingStart="5dp"
+            android:paddingEnd="55dp">
+
+            <RadioButton
+                android:id="@+id/radioButton_Self_ComputerWork"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Computer Work"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                tools:ignore="TouchTargetSizeCheck"
+                />
+
+            <RadioButton
+                android:id="@+id/radioButton_PrintingWork"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Printing Work"
+                android:textAlignment="center"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                tools:ignore="TouchTargetSizeCheck" />
+            <RadioButton
+                android:id="@+id/radioButton_Deliver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Delivery"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                tools:ignore="TouchTargetSizeCheck"/>
+
+        </RadioGroup>
+    </HorizontalScrollView>
+
+
+
+    <!-- SwipeRefreshLayout to enable pull-to-refresh -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp"
-        android:clipToPadding="false"
-        android:scrollbars="vertical"
-        android:background="@color/white"/>
+        android:layout_below="@+id/horizontalScrollView">
 
+        <!-- Nested layout with RecyclerView and RadioGroup for Mohar Type -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <!-- HorizontalScrollView with RadioGroup for Mohar Type -->
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/horizontalScrollView2"
+                android:background="@color/white"
+                android:clipToPadding="true"
+                android:padding="6dp"
+                android:scrollbars="horizontal" />
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/linearIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                app:indicatorColor="@color/colorPrimaryDark"
+                />
+            <HorizontalScrollView
+                android:id="@+id/horizontalScrollView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:backgroundTint="@color/white"
+                android:padding="0dp">
+
+                <RadioGroup
+                    android:id="@+id/radioGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/radioButton_Standard_Mohar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Standard Mohar" />
+
+                    <RadioButton
+                        android:id="@+id/radioButton_Self_Ink_Mohar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Self Ink Mohar" />
+
+                    <RadioButton
+                        android:id="@+id/radioButton_Shadi_card"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Shadi Card" />
+
+                    <RadioButton
+                        android:id="@+id/radioButton_Calender"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Calender" />
+
+                    <RadioButton
+                        android:id="@+id/radioButton_VisitingCard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Visiting Card" />
+
+                    <RadioButton
+                        android:id="@+id/radioButton_Banner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Banner" />
+
+                    <RadioButton
+                        android:id="@+id/radioButton_Poster"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Poster" />
+
+                    <RadioButton
+                        android:id="@+id/radioButton_Other"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Others" />
+                </RadioGroup>
+            </HorizontalScrollView>
+        </RelativeLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </RelativeLayout>

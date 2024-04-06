@@ -1,4 +1,4 @@
-package com.example.tpps;
+package com.example.tpps.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.tpps.R;
 import com.squareup.picasso.Picasso;
 
 public class FullScreenImageActivity extends AppCompatActivity {
@@ -24,7 +25,6 @@ public class FullScreenImageActivity extends AppCompatActivity {
 
 
         ImageView fullScreenImageView = findViewById(R.id.fullScreenImageView);
-
         // Retrieve the image URL passed from the previous activity
         String imageUrl = getIntent().getStringExtra("IMAGE_URL");
         if(imageUrl != null ){

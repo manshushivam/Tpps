@@ -7,52 +7,94 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RadioGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tpps.Activity.FullScreenImageActivity;
+import com.example.tpps.Activity.FullScreenPDFViwer;
+import com.example.tpps.Config.MyDB;
+import com.example.tpps.CreateOrder;
+import com.example.tpps.MainActivity;
 import com.example.tpps.R;
+import com.example.tpps.pdf.CreatePdf;
 import com.example.tpps.sms.SendSMS;
 import com.example.tpps.sms.SendWhatsAppSMS;
 import com.example.tpps.dataModel.MoharDataModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class AdapterOrderBook extends RecyclerView.Adapter<AdapterOrderBook.ViewHolder>  {
+public class AdapterReadOrder extends RecyclerView.Adapter<AdapterReadOrder.ViewHolder>  {
 
     private LayoutInflater layoutInflater;
     private List<MoharDataModel> dataList;
+
+    private List<MoharDataModel> originalDataList;
     private String filterOrderType;  // Variable to store the selected order type for filtering
+    private String filterStage;
 
 
-    public AdapterOrderBook(Context context, List<MoharDataModel> dataList){
+
+    public AdapterReadOrder(Context context, List<MoharDataModel> dataList){
         this.layoutInflater = LayoutInflater.from(context);
         this.dataList = dataList;
+        this.originalDataList = new ArrayList<>(dataList);
         this.filterOrderType = ""; // Initialize filterOrderType
+        this.filterStage = "";
+
     }
 
-    public void setFilterByOrderType(String orderType) {
+    public void filterByMobileNumber(String mobileNumber) {
+        dataList.clear();
 
+        if (mobileNumber.isEmpty()) {
+            dataList.addAll(originalDataList);
+        } else {
+            for (MoharDataModel item : originalDataList) {
+                if (item.getMobileNo().toLowerCase(Locale.getDefault()).contains(mobileNumber.toLowerCase(Locale.getDefault()))) {
+                    dataList.add(item);
+                }
+            }
+        }
+
+        notifyDataSetChanged();
+    }
+
+
+    public void setFilterByOrderType(String orderType) {
         filterOrderType = orderType;
+        notifyDataSetChanged();
+    }
+
+    public void setFilterByStage(String stage) {
+        filterStage = stage;
+        notifyDataSetChanged();
+    }
+
+    public void setFilters(String orderType, String stage) {
+        filterOrderType = orderType;
+        filterStage = stage;
         notifyDataSetChanged();
     }
 
@@ -67,88 +109,150 @@ public class AdapterOrderBook extends RecyclerView.Adapter<AdapterOrderBook.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        MoharDataModel currentItem = dataList.get(position);
-
-        if (filterOrderType.isEmpty() || currentItem.getOrderType().equalsIgnoreCase(filterOrderType)) {
-            // Update the views with the data
-            // ...
-            holder.itemView.setVisibility(View.VISIBLE);  // Set visibility to visible
-            holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT));
-        } else {
-            // If order type doesn't match, hide the view
-            holder.itemView.setVisibility(View.GONE);
-            holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
-        }
+        try {
+            MoharDataModel currentItem = dataList.get(position);
 
 
+            if ((filterOrderType.isEmpty() || currentItem.getOrderType().equalsIgnoreCase(filterOrderType))
+                    && (filterStage.isEmpty() || currentItem.getStage().equalsIgnoreCase(filterStage))) {
+                // Update the views with the data
+                // ...
+                holder.itemView.setVisibility(View.VISIBLE);
+                holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT));
+            } else {
+                // If order type or stage doesn't match, hide the view
+                holder.itemView.setVisibility(View.GONE);
+                holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+            }
 
 
-
-
-        holder.image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String imageUrl = currentItem.getImageUrl();
-                if(imageUrl == null){
-                    Toast.makeText(v.getContext(), "Image Not available", Toast.LENGTH_SHORT).show();
-                }else{
-                    Intent intent = new Intent(v.getContext(), FullScreenImageActivity.class);
-                    intent.putExtra("IMAGE_URL", imageUrl);
-                    v.getContext().startActivity(intent);
+            holder.image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String imageUrl = currentItem.getImageUrl();
+                    if (imageUrl == null) {
+                        Toast.makeText(v.getContext(), "Image Not available", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Intent intent = new Intent(v.getContext(), FullScreenImageActivity.class);
+                        intent.putExtra("IMAGE_URL", imageUrl);
+                        v.getContext().startActivity(intent);
+                    }
                 }
-            }
-        });
+            });
+            String nameOfCustomer = currentItem.getName();
+            nameOfCustomer=Character.toUpperCase(nameOfCustomer.charAt(0)) + nameOfCustomer.substring(1);
+
+            holder.name.setText(nameOfCustomer);
+            holder.address.setText(currentItem.getAddress());
+            holder.headDueDate.setText(currentItem.getDueDate());
+            holder.moharContent.setText(currentItem.getContent());
+            holder.invoiceNo.setText("Invoice No : " + currentItem.getGetId());
+            holder.orderType.setText("Order Type : " + currentItem.getOrderType());
+            holder.orderDate.setText("Order Date : " + currentItem.getOrderDate());
+            holder.dueDate.setText("Due Date :    " + currentItem.getDueDate());
+            holder.mobileNo.setText("Mobile No : " + currentItem.getMobileNo());
+            holder.totalAmount.setText("Total : Rs " + currentItem.getTotalAmount());
+            holder.paidAmount.setText("Paid : Rs " + currentItem.getPaidAmount());
+
+            double totalAmount = Double.parseDouble(currentItem.getTotalAmount());
+            double paidAmount = Double.parseDouble(currentItem.getPaidAmount());
+            double dueAmount = totalAmount - paidAmount;
+            holder.dueAmount.setText("Due: Rs " + dueAmount);
 
 
-        holder.moharContent.setText(currentItem.getContent());
-        holder.invoiceNo.setText("Invoice No : " + currentItem.getGetId());
-        holder.orderType.setText("Order Type : " +currentItem.getOrderType());
-        holder.orderDate.setText("Order Date : " + currentItem.getOrderDate());
-        holder.dueDate.setText("Due Date :    " + currentItem.getDueDate());
-        holder.mobileNo.setText("Mobile No : " + currentItem.getMobileNo());
-        holder.totalAmount.setText("Total : Rs " + currentItem.getTotalAmount());
-        holder.paidAmount.setText("Paid : Rs " + currentItem.getPaidAmount());
+            holder.call.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Handle phone number click
+                    String phoneNumber = currentItem.getMobileNo();
+                    startPhoneCall(v.getContext(), phoneNumber);
+                }
+            });
 
-        double totalAmount = Double.parseDouble(currentItem.getTotalAmount());
-        double paidAmount = Double.parseDouble(currentItem.getPaidAmount());
-        double dueAmount = totalAmount - paidAmount;
-        holder.dueAmount.setText("Due: Rs " + dueAmount);
+            holder.stage.setText(currentItem.getStage());
+            holder.setStageBackgroundColor(currentItem.getStage());
+            holder.stage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Handle button click
+                    showYesNoDialog(currentItem);
+
+                    // Toast.makeText(v.getContext(), "pop" , Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            holder.whatsapp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String phoneNumber = currentItem.getMobileNo();
+                    startWhatsAppChat(v.getContext(), phoneNumber);
+                    SendWhatsAppSMS whatsAppSMS = new SendWhatsAppSMS();
+                    whatsAppSMS.startWhatsAppChat(v.getContext(), phoneNumber, " ");
+                }
+            });
+
+            holder.pdf.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+
+                    Drawable d = v.getContext().getDrawable(R.drawable.tpps_logo);
+                    CreatePdf createPdf = new CreatePdf();
+                    File pdfFile = createPdf.generatePdf(v.getContext(), d, currentItem);
+
+                    Toast.makeText(v.getContext(), "File Created" + pdfFile , Toast.LENGTH_SHORT).show();
+
+                        //String pdfFileName = "your_pdf_file.pdf";
+
+                        // Get the URI of the PDF file
+                        Uri pdfUri = Uri.parse("file:///android_asset/" + pdfFile);
+
+                        // Create an intent to view the PDF using DrivePDF Viewer
+//                        Intent intent = new Intent(Intent.ACTION_VIEW);
+//                        intent.setDataAndType(pdfUri, "application/pdf");
+//                        intent.setPackage("com.google.android.apps.pdfviewer"); // Package name of DrivePDF Viewer
+//
+//
 
 
-        holder.mobileNo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Handle phone number click
-                String phoneNumber = currentItem.getMobileNo();
-                startPhoneCall(v.getContext(), phoneNumber);
-            }
-        });
 
-        holder.stage.setText(currentItem.getStage());
-        holder.setStageBackgroundColor(currentItem.getStage());
-        holder.stage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Handle button click
-                showYesNoDialog(currentItem);
+//                    if(pdfFile != null) {
+//                        Intent intent = new Intent(v.getContext(), FullScreenPDFViwer.class);
+//                        intent.putExtra("PDFFilePath", pdfFile.getAbsolutePath());
+//                        v.getContext().startActivity(intent);
+//                    }else{
+//                        Toast.makeText(v.getContext(), "PDF File Not Created" + pdfFile , Toast.LENGTH_SHORT).show();
+//                    }
 
-               // Toast.makeText(v.getContext(), "pop" , Toast.LENGTH_SHORT).show();
-            }
-        });
+                    }catch(Exception e){
+                        Toast.makeText(v.getContext(), e.getMessage() , Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
 
-        holder.whatsapp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String phoneNumber = currentItem.getMobileNo();
-                startWhatsAppChat(v.getContext(), phoneNumber);
-                SendWhatsAppSMS whatsAppSMS = new SendWhatsAppSMS();
-                whatsAppSMS.startWhatsAppChat(v.getContext(), phoneNumber , " ");
-            }
-        });
 
+            holder.headerLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Toggle visibility of the content section
+                    if (holder.body.getVisibility() == View.VISIBLE) {
+                        holder.body.setVisibility(View.GONE);
+                    } else {
+                        holder.body.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+
+
+
+
+        }catch (Exception e){
+            Toast.makeText(layoutInflater.getContext(), e.getMessage() , Toast.LENGTH_SHORT).show();
+        }
     }
+
 
     @Override
     public int getItemCount() {
@@ -162,8 +266,15 @@ public class AdapterOrderBook extends RecyclerView.Adapter<AdapterOrderBook.View
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // Declare views from your card layout
+        LinearLayout headerLayout ;
+        LinearLayout body ;
+        LinearLayout bottom ;
 
+        public TextView name;
+        public TextView address;
         public ImageView image;
+
+        public TextView headDueDate;
         public TextView moharContent;
 
         public TextView invoiceNo ;
@@ -179,13 +290,19 @@ public class AdapterOrderBook extends RecyclerView.Adapter<AdapterOrderBook.View
 
         public Button stage;
 
-        public Button whatsapp;
-
+        public FloatingActionButton pdf;
+        public FloatingActionButton whatsapp;
+        public FloatingActionButton call;
 
         public ViewHolder(View itemView) {
             super(itemView);
             // Initialize views from your card layout
             // textViewTitle = itemView.findViewById(R.id.textViewTitle);
+            name = itemView.findViewById(R.id.name_card);
+            address = itemView.findViewById(R.id.Address_card);
+            headerLayout = itemView.findViewById(R.id.head);
+            body = itemView.findViewById(R.id.body);
+            bottom = itemView.findViewById(R.id.body);
             image = itemView.findViewById(R.id.imageView_moharBook);
             moharContent = itemView.findViewById(R.id.textContent_moharBook);
             invoiceNo = itemView.findViewById(R.id.textInvoiceNo_moharBook);
@@ -197,32 +314,31 @@ public class AdapterOrderBook extends RecyclerView.Adapter<AdapterOrderBook.View
             paidAmount = itemView.findViewById(R.id.textPaidAmount_moharBook);
             dueAmount = itemView.findViewById(R.id.textDueAmount_moharBook);
             stage = itemView.findViewById(R.id.btnStage_moharBook);
+            pdf  = itemView.findViewById(R.id.pdf);
             whatsapp = itemView.findViewById(R.id.button_Whatsapp);
+            call = itemView.findViewById(R.id.button_call);
+            headDueDate = itemView.findViewById(R.id.headerDueDate);
         }
 
         public void setStageBackgroundColor(String s) {
             int colorResId;
             switch (s) {
-                case "Start":
-                    colorResId = R.color.startColor; // Replace with your color resource
+                case "Computer Work":
+                    colorResId = R.color.GreenOfLogo; // Replace with your color resource
                     break;
-                case "Formating Done?":
-                    colorResId = R.color.formatingColor; // Replace with your color resource
+                case "Printing Work":
+                    colorResId = R.color.BlueOfLogo; // Replace with your color resource
                     break;
-                case "Printing Done?":
-                    colorResId = R.color.printingColor; // Replace with your color resource
-                    break;
-                case "Dilevered":
-                    colorResId = R.color.deliveredColor; // Replace with your color resource
+                case "Delivery":
+                    colorResId = R.color.RedOfLogo; // Replace with your color resource
                     break;
                 default:
                     colorResId = R.color.defaultColor; // Replace with your default color resource
             }
                 int color = ContextCompat.getColor(itemView.getContext(), colorResId);
                 stage.setBackgroundColor(color);
-
+                headerLayout.setBackgroundColor(color);
         }
-
     }
 
 
@@ -233,14 +349,14 @@ public class AdapterOrderBook extends RecyclerView.Adapter<AdapterOrderBook.View
     private void moveDocumentToDeliveredItems(MoharDataModel currentItem) {
         try {
             // Get a reference to the document in the "Orders" collection
-            DocumentReference sourceDocRef = FirebaseFirestore.getInstance().collection("Orders").document(currentItem.getGetId());
+            DocumentReference sourceDocRef = FirebaseFirestore.getInstance().collection(MyDB.Collections).document(currentItem.getGetId());
             // Get a reference to the destination document in the "Delivered Items" collection
             //DocumentReference destDocRef = FirebaseFirestore.getInstance().collection("DeliveredItems").document(currentItem.getGetId());
           //  Toast.makeText(layoutInflater.getContext(), "ting tongg", Toast.LENGTH_SHORT).show();
             // Copy the document to the new location
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            db.collection("DeliveredItems")
+            db.collection(MyDB.Collection_DeliveredItems)
                     .add(currentItem)
                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
@@ -257,26 +373,9 @@ public class AdapterOrderBook extends RecyclerView.Adapter<AdapterOrderBook.View
                         public void onFailure(@NonNull Exception e) {
                             //Toast.makeText(getApplicationContext(), "Error saving image URL to Firestore", Toast.LENGTH_LONG).show();
                             Toast.makeText(layoutInflater.getContext(), "Item failed to Delivered Items", Toast.LENGTH_SHORT).show();
-
-
                             Log.w(TAG, "Error adding document", e);
                         }
                     });
-
-
-//            sourceDocRef.get().addOnSuccessListener(documentSnapshot -> {
-//                if (documentSnapshot.exists()) {
-//                    destDocRef.set(documentSnapshot.getData())
-//                            .addOnSuccessListener(aVoid -> {
-//                                // Document successfully moved
-//                                Toast.makeText(layoutInflater.getContext(), "Item moved to Delivered Items", Toast.LENGTH_SHORT).show();
-//                            })
-//                            .addOnFailureListener(e -> {
-//                                // Handle failure
-//                                Toast.makeText(layoutInflater.getContext(), "Failed to move item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-//                            });
-//                }
-//            });
 
             // Delete the original document from the "Orders" collection
             sourceDocRef.delete();
@@ -287,76 +386,93 @@ public class AdapterOrderBook extends RecyclerView.Adapter<AdapterOrderBook.View
 
 
     // Handle button click and update phase in the database
-    private void handleButtonClick(MoharDataModel currentItem) {
+    private void ChangeStage(MoharDataModel currentItem) {
 
         try {
             String currentItemStage = currentItem.getStage();
 
             switch (currentItemStage) {
-                case "Start":
-                    // Update phase to "Phase 1 Started" and update in the database
-                    currentItem.setStage("Formating Done?");
-                    // Toast.makeText(layoutInflater.getContext(), currentItem.getGetId() , Toast.LENGTH_SHORT).show();
+                case "Computer Work":
+                    currentItem.setStage("Printing Work");
                     updateDatabase(currentItem);
                     break;
-                case "Formating Done?":
-                    // Update phase to "Phase 2 Started" and update in the database
-                    currentItem.setStage("Printing Done?");
+
+                case "Printing Work":
+                    currentItem.setStage("Delivery");
+                    AskToSendSMS(currentItem);
                     updateDatabase(currentItem);
                     break;
-                case "Printing Done?":
-                    // Update phase to "Completed" and update in the database
 
-                    SendSMS sendSMS = new SendSMS(layoutInflater.getContext());
-                    sendSMS.sendSms(currentItem.getMobileNo(), "Your Items is ready Now, Please visit our store to pick up!");
-
-                    SendWhatsAppSMS sendWhatsAppSMS = new SendWhatsAppSMS();
-
-                    String DeliveryMessage = "आपका ऑर्डर अब तैयार है, कृपया हमारे स्टोर पर आ जाएं और उसे ले जाए!  \uD83D\uDECD\uFE0F\uD83C\uDF89 \n\n" +
-                                              "शुभकामनाएँ \n"+
-                                              "तारकेश्वर प्रिंटिंग प्रेस, डुमराँव";
-                            ;
-                    sendWhatsAppSMS.startWhatsAppChat(layoutInflater.getContext(), currentItem.getMobileNo() , DeliveryMessage);
-
-
-
-                    currentItem.setStage("Delivery Done?");
-
-                    updateDatabase(currentItem);
-                    break;
-                case "Delivery Done?":
-                    // Update phase to "Completed" and update in the database
+                case "Delivery":
                     currentItem.setStage("Dilevered");
-                    updateDatabase(currentItem);
-                    notifyDataSetChanged();
                     moveDocumentToDeliveredItems(currentItem);
-
-
-                    break;
-                case "Dilevered":
-                    // Update phase to "Completed" and update in the database
                     notifyDataSetChanged();
-                    moveDocumentToDeliveredItems(currentItem);
-
-
                     break;
-                // Add more cases if needed
             }
         }catch (Exception e){
             Toast.makeText(layoutInflater.getContext(), e.getMessage() , Toast.LENGTH_SHORT).show();
         }
-
         // Notify the adapterOrderBook that data has changed
         notifyDataSetChanged();
     }
 
+    private void AskToSendSMS(MoharDataModel currentItem) {
+
+        try{
+            String sms ="Your order is now ready, please come to our store and pick it up! Best wishes, Tarkeshwar Printing Press, Dumraon";
+
+            String DeliveryMessage = "आपका ऑर्डर अब तैयार है, कृपया हमारे स्टोर पर आ जाएं और उसे ले जाए!  \uD83D\uDECD\uFE0F\uD83C\uDF89 \n\n" +
+                "शुभकामनाएँ \n"+
+                "तारकेश्वर प्रिंटिंग प्रेस, डुमराँव";
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(layoutInflater.getContext());
+            builder.setTitle("Choose Communication Method")
+                    .setMessage("Inform Customer to Pick Up")
+                    .setPositiveButton("SMS", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Handle SMS option
+                            SendSMS smsSender = new SendSMS(layoutInflater.getContext());
+                            smsSender.sendSms(currentItem.getMobileNo(), sms);
+
+                        }
+                    })
+                    .setNegativeButton("WhatsApp", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Handle WhatsApp option
+                            SendWhatsAppSMS whatsAppSMS = new SendWhatsAppSMS();
+                            whatsAppSMS.startWhatsAppChat(layoutInflater.getContext(), currentItem.getMobileNo(), DeliveryMessage);
+
+                        }
+                    })
+                    .setNeutralButton("Both", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Handle the case where no message is sent
+                            SendSMS smsSender = new SendSMS(layoutInflater.getContext());
+                            smsSender.sendSms(currentItem.getMobileNo(), sms);
+
+                            SendWhatsAppSMS whatsAppSMS = new SendWhatsAppSMS();
+                            whatsAppSMS.startWhatsAppChat(layoutInflater.getContext(), currentItem.getMobileNo(), DeliveryMessage);
+                        }
+                    })
+                    .setCancelable(false)
+                    .show();
+
+
+        }catch (Exception e){
+            Toast.makeText(layoutInflater.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+    }
 
 
     // Update the phase in the database (replace this with your actual database update code)
     private void updateDatabase(MoharDataModel currentItem) {
 
         try {
-            DocumentReference docRef = FirebaseFirestore.getInstance().collection("Orders").document(currentItem.getGetId());
+            DocumentReference docRef = FirebaseFirestore.getInstance().collection(MyDB.Collections).document(currentItem.getGetId());
             //FirebaseFirestore.getInstance().collection("your_collection").document(documentId);
             docRef.update("stage", currentItem.getStage())
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -388,15 +504,15 @@ public class AdapterOrderBook extends RecyclerView.Adapter<AdapterOrderBook.View
 
         try {
             AlertDialog.Builder builder = new AlertDialog.Builder(layoutInflater.getContext());
-            builder.setTitle("Confirmation");
-            builder.setMessage("Are you sure?");
+            builder.setTitle("Are you sure?");
+            builder.setMessage(currentItem.getStage() + " Has Been Completed ?");
 
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     // User clicked Yes
                     // Perform your action here
-                    handleButtonClick(currentItem);
+                    ChangeStage(currentItem);
                     dialog.dismiss();
                 }
             });

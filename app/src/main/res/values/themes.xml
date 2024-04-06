@@ -3,7 +3,14 @@
     <style name="Base.Theme.Tpps" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+            <item name="colorPrimaryDark">@color/BlueOfLogo</item>
+
     </style>
 
     <style name="Theme.Tpps" parent="Base.Theme.Tpps" />
+
+    <style name="ShapeAppearanceOverlay.App.Round" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item> <!-- Set cornerSize to 50% for a circular shape -->
+    </style>
 </resources>

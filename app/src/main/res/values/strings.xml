@@ -1,3 +1,10 @@
 <resources>
+
+
     <string name="app_name">Tpps</string>
+    <string name="order_success_message">Thank you for your order at Tarkeshwar Printing Press, Dumraon !\nYour items will be ready by %1$s\nTotal amount: %2$s\nAmount you have paid: %3$s</string>
+    <string name="company_name_in_hindi">तारकेश्वर प्रिंटिंग प्रेस, डुमराँव</string>
+    <string name="hindi_order_success_message">नमस्ते!\n%1$s में पधारने के लिए धन्यवाद।\n\nआपका ऑर्डर  *%2$s* तक तैयार हो जाएगा ।\nजिसका कुल राशि: *₹%3$s*\nआपने जमा किया राशि: *₹%4$s*\n\nयदि आपके पास कोई सवाल या सहायता की आवश्यकता है, तो हमसे संपर्क करें।\n+919572088920\nहम आपकी सेवा करने के लिए तत्पर हैं! 😊\n\nशुभकामनाएँ,\n%5$s</string>
+    <string name="addTypes">Add Order Types</string>
+
 </resources>

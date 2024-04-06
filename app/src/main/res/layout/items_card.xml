@@ -2,156 +2,280 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:elevation="6dp"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="8dp"
+
 
     >
 
-    <LinearLayout
-        android:id="@+id/containerLayout"
-        android:layout_width="0dp"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:elevation="8dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="8dp"
+        android:layout_marginEnd="5dp"
+        app:cardElevation="1dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
+        tools:layout_editor_absoluteX="8dp">
 
-        <!-- CardView for elevated card with shadow -->
-        <androidx.cardview.widget.CardView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            app:cardCornerRadius="8dp"
-            app:cardMaxElevation="80dp">
+            android:orientation="vertical">
+            <!-- Top Linear Layout -->
+            <LinearLayout
+                android:id="@+id/head"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/BlueOfLogo"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                >
+
+                <TextView
+                    android:id="@+id/name_card"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Manshu Shivam"
+                    android:textAppearance="?attr/textAppearanceHeadline5"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/Address_card"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Address - Dumraon"
+
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/textOrderType_moharBook"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Order Type - Self Ink Mohar"
+
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
+
+
+
+            <!-- Bottom Linear Layout -->
+<LinearLayout
+    android:id="@+id/body"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:visibility="visible"
+    >
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+
+            android:paddingLeft="16dp"
+            android:paddingTop="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="2dp"
+            >
+
+            <TextView
+                android:id="@+id/textContent_moharBook"
+                android:layout_width="249dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Content - 100 Pc Card No 200"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="@color/black"
+                android:textSize="16dp" />
+            <TextView
+                android:id="@+id/textMobileNo_moharBook"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Mobile No - 9823853678"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/textInvoiceNo_moharBook"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Invoice No - 9823853678"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+
+            <TextView
+                android:id="@+id/textOrderDate_moharBook"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:layout_marginTop="8dp"
+                android:text="Order Date - 01 Feb 2024"
+                android:textSize="14sp" />
+            <TextView
+                android:id="@+id/textDueDate_moharBook"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:layout_marginTop="8dp"
+                android:text="Due Date - 01 Feb 2024"
+                android:textSize="14sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@color/white"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal"
+                android:textColor="@color/black">
+
+                <!-- TextView for Total Amount -->
+                <TextView
+                    android:id="@+id/textTotalAmount_moharBook"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+
+                    android:text="Total: $100.00"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
+
+                <!-- TextView for Paid Amount -->
+                <TextView
+                    android:id="@+id/textPaidAmount_moharBook"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Paid: $50.00"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
+
+                <!-- TextView for Due Amount -->
+                <TextView
+                    android:id="@+id/textDueAmount_moharBook"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Due: $50.00"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+            <!-- Buttons -->
+            <LinearLayout
+                android:id="@+id/bottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+
+                android:paddingLeft="16dp"
+                android:paddingTop="5dp"
+                android:paddingRight="2dp"
+                android:paddingBottom="5dp"
+
                 >
 
-
-                <!-- ImageView for Image -->
-                <ImageView
-                    android:id="@+id/imageView_moharBook"
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:scaleType="centerInside"
-
-                    android:src="@drawable/tpps_logo"
-
-                    android:visibility="visible" />
-
-                <!-- TextView for Content -->
-                <TextView
-                    android:id="@+id/textContent_moharBook"
-                    android:layout_width="match_parent"
-                    android:textColor="@color/black"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginTop="16dp"
-                    android:text="Content"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:visibility="visible" />
-
-                <!-- Other views as per your card layout -->
-                <TextView
-                    android:id="@+id/textOrderDate_moharBook"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Order Date: 01/01/2024"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/textMobileNo_moharBook"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Mobile No: 9823853678"
-                    android:textSize="14sp" />
-
-                <!-- LinearLayout for Total and Paid Amounts -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
-
-                    <!-- TextView for Total Amount -->
-                    <TextView
-                        android:id="@+id/textTotalAmount_moharBook"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/black"
-                        android:layout_marginLeft="5dp"
-                        android:layout_weight="1"
-                        android:text="Total: $100.00"
-                        android:textSize="14sp" />
-
-                    <!-- TextView for Paid Amount -->
-                    <TextView
-                        android:id="@+id/textPaidAmount_moharBook"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/black"
-                        android:layout_weight="1"
-                        android:text="Paid: $50.00"
-                        android:textSize="14sp" />
-
-                    <!-- TextView for Due Amount -->
-                    <TextView
-                        android:id="@+id/textDueAmount_moharBook"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/black"
-                        android:layout_weight="1"
-                        android:text="Due: $50.00"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/button_Whatsapp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:backgroundTint="#128c7e"
-                    android:text="Whatsapp"
-                    android:textColor="@android:color/white" />
-
-
-
-                <!-- Button for Stage -->
+                <!-- "Start" Button on the left side -->
                 <Button
                     android:id="@+id/btnStage_moharBook"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:backgroundTint="@color/black"
+
+                    android:layout_gravity="center"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/ComputerWork"
                     android:text="Start"
                     android:textColor="@android:color/white" />
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/pdf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="10dp"
+                    android:backgroundTint="@color/white"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:elevation="40dp"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Round"
+                    android:contentDescription="Open WhatsApp"
+                    app:srcCompat="@drawable/pdf"
+                    />
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/button_call"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:elevation="40dp"
+                    android:backgroundTint="@color/BlueOfLogo"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Round"
+                    android:contentDescription="Call"
+                    android:src="@drawable/call"
+                    />
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/button_Whatsapp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:elevation="40dp"
+                    android:layout_marginRight="10dp"
+                    android:backgroundTint="#25D366"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Round"
+                    android:contentDescription="Open WhatsApp"
+                    app:srcCompat="@drawable/whatsapp"
+            />
+
 
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
-    </LinearLayout>
+
+
+        </LinearLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imageView_moharBook"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_gravity="end"
+            android:layout_marginTop="60dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginRight="30dp"
+            android:background="@xml/circular_background"
+            android:scaleType="centerCrop"
+            android:src="@drawable/roundlogo" />
+
+        <TextView
+            android:id="@+id/headerDueDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:background="@xml/bookmark_shape"
+            android:text="28 Feb"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+
+            android:textColor="@android:color/white" />
+
+    </com.google.android.material.card.MaterialCardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

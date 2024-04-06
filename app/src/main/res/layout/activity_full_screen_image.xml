@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FullScreenImageActivity">
+    tools:context=".Activity.FullScreenImageActivity">
 
     <ImageView
         android:id="@+id/fullScreenImageView"
@@ -11,5 +11,13 @@
         android:layout_height="match_parent"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true" />
+
+<!--    <Button-->
+<!--        android:id="@+id/download"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:backgroundTint="@color/black"-->
+<!--        android:text="Download" />-->
+
 
 </RelativeLayout>

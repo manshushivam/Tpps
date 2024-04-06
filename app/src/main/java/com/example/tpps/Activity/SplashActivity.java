@@ -1,10 +1,13 @@
-package com.example.tpps;
+package com.example.tpps.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+
+import com.example.tpps.MainActivity;
+import com.example.tpps.R;
 
 public class SplashActivity extends AppCompatActivity {
 
