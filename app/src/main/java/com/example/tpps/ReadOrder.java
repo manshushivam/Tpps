@@ -6,13 +6,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tpps.adapter.AdapterOrderBook;
 import com.example.tpps.dataModel.MoharDataModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -29,19 +25,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class MoharBook extends AppCompatActivity {
+public class OrderBook extends AppCompatActivity {
     private FirebaseFirestore db;
     private List<MoharDataModel> dataList;
 
     RecyclerView recyclerView;
-    Adapter adapter;
+    AdapterOrderBook adapterOrderBook;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mohar_book);
+        setContentView(R.layout.activity_order_book);
 
         db = FirebaseFirestore.getInstance();
 
@@ -56,6 +52,7 @@ public class MoharBook extends AppCompatActivity {
                                 MoharDataModel data = new MoharDataModel(
                                         document.getString("imageUrl"),
                                         document.getString("orderDate"),
+                                        document.getString("dueDate"),
                                         document.getString("mobileNo"),
                                         document.getString("content"),
                                         document.getString("totalAmount"),
@@ -69,20 +66,25 @@ public class MoharBook extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Total Pending Work : "+dataList.size() , Toast.LENGTH_SHORT).show();
 
 
-                            // Sort dataList based on order date in descending order
+                            // Sort dataList based on the shortest duration between order date and due date
                             Collections.sort(dataList, new Comparator<MoharDataModel>() {
                                 @Override
                                 public int compare(MoharDataModel o1, MoharDataModel o2) {
-                                    SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+                                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
 
                                     try {
-                                        Date date1 = dateFormat.parse(o1.getOrderDate());
-                                        Date date2 = dateFormat.parse(o2.getOrderDate());
+                                        Date orderDate1 = dateFormat.parse(o1.getOrderDate());
+                                        Date dueDate1 = dateFormat.parse(o1.getDueDate());
 
-                                        // Sort in descending order
-                                        if (date1 != null && date2 != null) {
-                                            return date2.compareTo(date1);
-                                        }
+                                        Date orderDate2 = dateFormat.parse(o2.getOrderDate());
+                                        Date dueDate2 = dateFormat.parse(o2.getDueDate());
+
+                                        // Calculate durations
+                                        long duration1 = dueDate1.getTime() - orderDate1.getTime();
+                                        long duration2 = dueDate2.getTime() - orderDate2.getTime();
+
+                                        // Sort in ascending order based on duration (shortest duration first)
+                                        return Long.compare(duration1, duration2);
                                     } catch (ParseException e) {
                                         e.printStackTrace();
                                     }
@@ -93,10 +95,11 @@ public class MoharBook extends AppCompatActivity {
 
 
 
+
                             recyclerView = findViewById(R.id.recyclerView);
-                            recyclerView.setLayoutManager(new LinearLayoutManager(MoharBook.this));
-                            adapter = new Adapter(MoharBook.this, dataList);
-                            recyclerView.setAdapter(adapter);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(OrderBook.this));
+                            adapterOrderBook = new AdapterOrderBook(OrderBook.this, dataList);
+                            recyclerView.setAdapter(adapterOrderBook);
                         }
 
                         else{

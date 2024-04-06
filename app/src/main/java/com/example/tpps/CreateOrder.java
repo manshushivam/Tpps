@@ -2,8 +2,6 @@ package com.example.tpps;
 
 import static android.content.ContentValues.TAG;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +24,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.tpps.sms.SendSMS;
+import com.example.tpps.sms.SendWhatsAppSMS;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
@@ -37,8 +37,6 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -47,7 +45,7 @@ import java.util.Locale;
 import java.util.Map;
 
 
-public class mohar extends AppCompatActivity {
+public class CashMemo extends AppCompatActivity {
 
     ImageView image;
     Button btnCamera;
@@ -63,7 +61,7 @@ public class mohar extends AppCompatActivity {
     EditText mobileNo;
     private String currentPhotoPath;
 
-    Date orderDate;
+    String orderDate;
 
     private String ImageURL;
 
@@ -71,7 +69,7 @@ public class mohar extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mohar);
+        setContentView(R.layout.activity_cash_memo);
 
         image = findViewById(R.id.imageView_big);
         btnCamera = findViewById(R.id.button_uplodImage);
@@ -85,7 +83,7 @@ public class mohar extends AppCompatActivity {
 
 
                     currentPhotoPath = imageFile.getAbsolutePath();
-                    Uri imageURI = FileProvider.getUriForFile(mohar.this , "com.example.tpps.fileprovider" , imageFile);
+                    Uri imageURI = FileProvider.getUriForFile(CashMemo.this , "com.example.tpps.fileprovider" , imageFile);
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, imageURI);
                     startActivityForResult(intent , 1)  ;
@@ -102,7 +100,7 @@ public class mohar extends AppCompatActivity {
         btnChangeDate = findViewById(R.id.button_dateMohar);
 
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        calendar.add(Calendar.DAY_OF_MONTH, 3);
         updateEditTextDate(calendar.getTime());
 
         // Set OnClickListener for the Change Date button
@@ -116,10 +114,15 @@ public class mohar extends AppCompatActivity {
 
         //oder date
 
-        Calendar anotherCalendar = Calendar.getInstance();
-        anotherCalendar.add(Calendar.DAY_OF_MONTH, 0);
-        orderDate = anotherCalendar.getTime();
+//        Calendar anotherCalendar = Calendar.getInstance();
+//        anotherCalendar.add(Calendar.DAY_OF_MONTH, 0);
+//        orderDate = anotherCalendar.getTime();
         //date end
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+        Date currentDate = new Date();
+        String formattedDate = sdf.format(currentDate);
+        orderDate = formattedDate.toString();
 
 
         moharContent = findViewById(R.id.editTextMultiLine_moharContent);
@@ -132,63 +135,131 @@ public class mohar extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    // Create a new user with a first and last name
-                    Map<String, Object> Mohar = new HashMap<>();
-                    //Mohar.put("invoiceNo" , invoiceNO);
-                    Mohar.put("imageUrl", ImageURL);
-                    Mohar.put("content", moharContent.getText().toString().trim());
-                    Mohar.put("mobileNo", mobileNo.getText().toString().trim());
-                    Mohar.put("dueDate", dateText.getText().toString().trim());
-                    Mohar.put("orderDate", orderDate.toString().trim());
-                    Mohar.put("totalAmount", totalAmount.getText().toString().trim());
-                    Mohar.put("paidAmount", paidAmount.getText().toString().trim());
-                    Mohar.put("stage" , "Start");
-
-
-                    // Add a new document with a generated ID
-                    db.collection("Mohars")
-                            .add(Mohar)
-                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                @Override
-                                public void onSuccess(DocumentReference documentReference) {
-                                    Toast.makeText(getApplicationContext(), "Order Submitted", Toast.LENGTH_SHORT).show();
-                                    Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(getApplicationContext(), "Error saving image URL to Firestore", Toast.LENGTH_LONG).show();
-                                    Log.w(TAG, "Error adding document", e);
-                                }
-                            });
-
-
-
-                    String message = "Thank you for your order!\n"
-                            + "Your items will be ready by " + dateText.getText().toString().trim() + "\n"
-                            + "Total amount: " + totalAmount.getText().toString().trim() + "\n"
-                            + "Amount you have paid: " + paidAmount.getText().toString().trim();
-
-                    SendSMS smsSender = new SendSMS(getApplicationContext());
-                    smsSender.sendSms(mobileNo.getText().toString(),message);
-
-                } catch (Exception e) {
-
-                    Toast.makeText(getApplicationContext(), "Error in submitting", Toast.LENGTH_LONG).show();
-                }
+                if (validateFields()) {
+                    CreateOrder(v);
+                }else
+                Toast.makeText(getApplicationContext(), "Please fill in all the fields", Toast.LENGTH_LONG).show();
             }
         });
+
+    }
+
+    
+    private void CreateOrder(View v) {
+        try {
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            // Create a new user with a first and last name
+            Map<String, Object> Mohar = new HashMap<>();
+            //Mohar.put("invoiceNo" , invoiceNO);
+            Mohar.put("imageUrl", ImageURL);
+            Mohar.put("content", moharContent.getText().toString().trim());
+            Mohar.put("mobileNo", mobileNo.getText().toString().trim());
+            Mohar.put("dueDate", dateText.getText().toString().trim());
+            Mohar.put("orderDate", orderDate.toString().trim());
+            Mohar.put("totalAmount", totalAmount.getText().toString().trim());
+            Mohar.put("paidAmount", paidAmount.getText().toString().trim());
+            Mohar.put("stage", "Start");
+
+
+            // Add a new document with a generated ID
+            db.collection("Mohars")
+                    .add(Mohar)
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            Toast.makeText(getApplicationContext(), "Order Submitted", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getApplicationContext(), "Error saving image URL to Firestore", Toast.LENGTH_LONG).show();
+                            Log.w(TAG, "Error adding document", e);
+                        }
+                    });
+
+
+            String message = "Thank you for your order at Tarkeshwar Printing Press, Dumraon !\n"
+                    + "Your items will be ready by " + dateText.getText().toString().trim() + "\n"
+                    + "Total amount: " + totalAmount.getText().toString().trim() + "\n"
+                    + "Amount you have paid: " + paidAmount.getText().toString().trim();
+
+//                    String company = "Tarkeshwar Printing Press, Dumraon "; // Replace with your actual company name
+
+            String namasteEmoji = "\uD83D\uDE4F"; // Namaste emoji
+            String smileyEmoji = "\uD83D\uDE0A"; // Smiley emoji
+
+//                    String message2 = namasteEmoji + " Namaste!\n" +
+//                            "Thank you for choosing " + company + ". We appreciate your order!\n\n" +
+//                            "Your items will be ready by *" + dateText.getText().toString().trim() + "*\n" +
+//                            "Total amount: " + totalAmount.getText().toString().trim() + "\n" +
+//                            "Amount you have paid: " + paidAmount.getText().toString().trim() + "\n\n" +
+//                            "If you have any questions or need further assistance, feel free to contact us.\n" +
+//                            "We look forward to serving you! " + smileyEmoji + "\n\n" +
+//                            "Best regards,\n" +
+//                            company;
+
+            String compnayNameInHindi = "तारकेश्वर प्रिंटिंग प्रेस, डुमराँव";
+
+            String HindiMessage = " नमस्ते!" + namasteEmoji + "\n" +
+                    compnayNameInHindi + " में पधारने के लिए धन्यवाद।\n\n" +
+                    "आपका ऑर्डर  *" + dateText.getText().toString().trim() + "* तक तैयार हो जाएगा ।\n" +
+                    "जिसका कुल राशि: *₹" + totalAmount.getText().toString().trim() + "*\n" +
+                    "आपने जमा किया राशि: *₹" + paidAmount.getText().toString().trim() + "*\n\n" +
+                    "यदि आपके पास कोई सवाल या सहायता की आवश्यकता है, तो हमसे संपर्क करें।\n" +
+                    "+919572088920\n" +
+                    "हम आपकी सेवा करने के लिए तत्पर हैं! " + smileyEmoji + "\n\n" +
+                    "शुभकामनाएँ,\n" +
+                    compnayNameInHindi;
+
+            SendSMS smsSender = new SendSMS(getApplicationContext());
+            smsSender.sendSms(mobileNo.getText().toString(), message);
+
+            SendWhatsAppSMS whatsAppSMS = new SendWhatsAppSMS();
+            whatsAppSMS.startWhatsAppChat(v.getContext(), mobileNo.getText().toString(), HindiMessage);
+
+
+            finish();
+
+        } catch (Exception e) {
+
+            Toast.makeText(getApplicationContext(), "Error in submitting", Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+
+    private boolean validateFields() {
+        String content = moharContent.getText().toString().trim();
+        String userMobileNo = mobileNo.getText().toString().trim();
+        String orderDate = dateText.getText().toString().trim();
+        String amount = totalAmount.getText().toString().trim();
+        String paidAmountValue = paidAmount.getText().toString().trim();
+
+        return !content.isEmpty() &&
+                isValidMobileNumber(userMobileNo) &&
+                !orderDate.isEmpty() &&
+                !amount.isEmpty() &&
+                !paidAmountValue.isEmpty();
+    }
+
+    private boolean isValidMobileNumber(String mobileNumber) {
+        // Check if the mobile number is exactly 10 digits
+        if(!mobileNumber.isEmpty() && mobileNumber.length() == 10 && mobileNumber.matches("\\d{10}")){
+            return true;
+        }else{
+            Toast.makeText(getApplicationContext() , "Incorrect Mobile No" , Toast.LENGTH_SHORT).show();
+            return false;
+        }
 
     }
 
 
     private void updateEditTextDate(Date date) {
         // Format the date and set it to the EditText
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.US);
 
         dateText.setText(sdf.format(date));
     }
@@ -214,7 +285,7 @@ public class mohar extends AppCompatActivity {
                 calendar.get(Calendar.DAY_OF_MONTH)
         );
 
-        // Set a minimum date (today + 3 days)
+
         calendar.add(Calendar.DAY_OF_MONTH, 0);
         datePickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
 

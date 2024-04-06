@@ -1,22 +1,21 @@
-package com.example.tpps;
+package com.example.tpps.adapter;
 
 
 import static android.content.ContentValues.TAG;
 
 import android.app.AlertDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,22 +23,37 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.tpps.Activity.FullScreenImageActivity;
+import com.example.tpps.R;
+import com.example.tpps.sms.SendSMS;
+import com.example.tpps.sms.SendWhatsAppSMS;
 import com.example.tpps.dataModel.MoharDataModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>  {
+public class AdapterOrderBook extends RecyclerView.Adapter<AdapterOrderBook.ViewHolder>  {
 
     private LayoutInflater layoutInflater;
     private List<MoharDataModel> dataList;
-    Adapter(Context context, List<MoharDataModel> dataList){
+    private String filterOrderType;  // Variable to store the selected order type for filtering
+
+
+    public AdapterOrderBook(Context context, List<MoharDataModel> dataList){
         this.layoutInflater = LayoutInflater.from(context);
         this.dataList = dataList;
+        this.filterOrderType = ""; // Initialize filterOrderType
+    }
+
+    public void setFilterByOrderType(String orderType) {
+
+        filterOrderType = orderType;
+        notifyDataSetChanged();
     }
 
 
@@ -47,8 +61,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>  {
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         View view = layoutInflater.inflate(R.layout.items_card,viewGroup, false);
-
-
         return new ViewHolder(view);
     }
 
@@ -57,6 +69,21 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>  {
 
         MoharDataModel currentItem = dataList.get(position);
 
+        if (filterOrderType.isEmpty() || currentItem.getOrderType().equalsIgnoreCase(filterOrderType)) {
+            // Update the views with the data
+            // ...
+            holder.itemView.setVisibility(View.VISIBLE);  // Set visibility to visible
+            holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+        } else {
+            // If order type doesn't match, hide the view
+            holder.itemView.setVisibility(View.GONE);
+            holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+        }
+
+
+
 
 
 
@@ -64,18 +91,25 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>  {
             @Override
             public void onClick(View v) {
                 String imageUrl = currentItem.getImageUrl();
-                Intent intent = new Intent(v.getContext(), FullScreenImageActivity.class);
-                intent.putExtra("IMAGE_URL", imageUrl);
-                v.getContext().startActivity(intent);
+                if(imageUrl == null){
+                    Toast.makeText(v.getContext(), "Image Not available", Toast.LENGTH_SHORT).show();
+                }else{
+                    Intent intent = new Intent(v.getContext(), FullScreenImageActivity.class);
+                    intent.putExtra("IMAGE_URL", imageUrl);
+                    v.getContext().startActivity(intent);
+                }
             }
         });
 
 
         holder.moharContent.setText(currentItem.getContent());
-        holder.orderDate.setText("Order Date: " + currentItem.getOrderDate());
-        holder.mobileNo.setText("Mobile No: " + currentItem.getMobileNo());
-        holder.totalAmount.setText("Total: Rs " + currentItem.getTotalAmount());
-        holder.paidAmount.setText("Paid: Rs " + currentItem.getPaidAmount());
+        holder.invoiceNo.setText("Invoice No : " + currentItem.getGetId());
+        holder.orderType.setText("Order Type : " +currentItem.getOrderType());
+        holder.orderDate.setText("Order Date : " + currentItem.getOrderDate());
+        holder.dueDate.setText("Due Date :    " + currentItem.getDueDate());
+        holder.mobileNo.setText("Mobile No : " + currentItem.getMobileNo());
+        holder.totalAmount.setText("Total : Rs " + currentItem.getTotalAmount());
+        holder.paidAmount.setText("Paid : Rs " + currentItem.getPaidAmount());
 
         double totalAmount = Double.parseDouble(currentItem.getTotalAmount());
         double paidAmount = Double.parseDouble(currentItem.getPaidAmount());
@@ -93,13 +127,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>  {
         });
 
         holder.stage.setText(currentItem.getStage());
-
-
-
-//        String stage = currentItem.getStage();
-//        holder.setStageBackgroundColor(stage);
         holder.setStageBackgroundColor(currentItem.getStage());
-
         holder.stage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,6 +143,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>  {
             public void onClick(View v) {
                 String phoneNumber = currentItem.getMobileNo();
                 startWhatsAppChat(v.getContext(), phoneNumber);
+                SendWhatsAppSMS whatsAppSMS = new SendWhatsAppSMS();
+                whatsAppSMS.startWhatsAppChat(v.getContext(), phoneNumber , " ");
             }
         });
 
@@ -126,6 +156,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>  {
 
     }
 
+
+
     // ... Other methods
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -133,7 +165,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>  {
 
         public ImageView image;
         public TextView moharContent;
+
+        public TextView invoiceNo ;
+        public TextView orderType;
         public TextView orderDate;
+
+        public TextView dueDate;
         public TextView mobileNo;
         public TextView totalAmount;
         public TextView paidAmount;
@@ -151,7 +188,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>  {
             // textViewTitle = itemView.findViewById(R.id.textViewTitle);
             image = itemView.findViewById(R.id.imageView_moharBook);
             moharContent = itemView.findViewById(R.id.textContent_moharBook);
+            invoiceNo = itemView.findViewById(R.id.textInvoiceNo_moharBook);
+            orderType = itemView.findViewById(R.id.textOrderType_moharBook);
             orderDate = itemView.findViewById(R.id.textOrderDate_moharBook);
+            dueDate = itemView.findViewById(R.id.textDueDate_moharBook);
             mobileNo = itemView.findViewById(R.id.textMobileNo_moharBook);
             totalAmount = itemView.findViewById(R.id.textTotalAmount_moharBook);
             paidAmount = itemView.findViewById(R.id.textPaidAmount_moharBook);
@@ -192,8 +232,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>  {
     // Move document to "Delivered Items" collection
     private void moveDocumentToDeliveredItems(MoharDataModel currentItem) {
         try {
-            // Get a reference to the document in the "Mohars" collection
-            DocumentReference sourceDocRef = FirebaseFirestore.getInstance().collection("Mohars").document(currentItem.getGetId());
+            // Get a reference to the document in the "Orders" collection
+            DocumentReference sourceDocRef = FirebaseFirestore.getInstance().collection("Orders").document(currentItem.getGetId());
             // Get a reference to the destination document in the "Delivered Items" collection
             //DocumentReference destDocRef = FirebaseFirestore.getInstance().collection("DeliveredItems").document(currentItem.getGetId());
           //  Toast.makeText(layoutInflater.getContext(), "ting tongg", Toast.LENGTH_SHORT).show();
@@ -209,6 +249,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>  {
                             Toast.makeText(layoutInflater.getContext(), "Item moved to Delivered Items", Toast.LENGTH_SHORT).show();
 //
                             Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -237,7 +278,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>  {
 //                }
 //            });
 
-            // Delete the original document from the "Mohars" collection
+            // Delete the original document from the "Orders" collection
             sourceDocRef.delete();
         } catch (Exception e) {
             Toast.makeText(layoutInflater.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -268,6 +309,17 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>  {
 
                     SendSMS sendSMS = new SendSMS(layoutInflater.getContext());
                     sendSMS.sendSms(currentItem.getMobileNo(), "Your Items is ready Now, Please visit our store to pick up!");
+
+                    SendWhatsAppSMS sendWhatsAppSMS = new SendWhatsAppSMS();
+
+                    String DeliveryMessage = "आपका ऑर्डर अब तैयार है, कृपया हमारे स्टोर पर आ जाएं और उसे ले जाए!  \uD83D\uDECD\uFE0F\uD83C\uDF89 \n\n" +
+                                              "शुभकामनाएँ \n"+
+                                              "तारकेश्वर प्रिंटिंग प्रेस, डुमराँव";
+                            ;
+                    sendWhatsAppSMS.startWhatsAppChat(layoutInflater.getContext(), currentItem.getMobileNo() , DeliveryMessage);
+
+
+
                     currentItem.setStage("Delivery Done?");
 
                     updateDatabase(currentItem);
@@ -294,7 +346,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>  {
             Toast.makeText(layoutInflater.getContext(), e.getMessage() , Toast.LENGTH_SHORT).show();
         }
 
-        // Notify the adapter that data has changed
+        // Notify the adapterOrderBook that data has changed
         notifyDataSetChanged();
     }
 
@@ -304,7 +356,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>  {
     private void updateDatabase(MoharDataModel currentItem) {
 
         try {
-            DocumentReference docRef = FirebaseFirestore.getInstance().collection("Mohars").document(currentItem.getGetId());
+            DocumentReference docRef = FirebaseFirestore.getInstance().collection("Orders").document(currentItem.getGetId());
             //FirebaseFirestore.getInstance().collection("your_collection").document(documentId);
             docRef.update("stage", currentItem.getStage())
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -313,6 +365,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder>  {
                             // Database update successful
                             notifyDataSetChanged(); // Notify RecyclerView
                             Toast.makeText(layoutInflater.getContext(), "updated" , Toast.LENGTH_SHORT).show();
+
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
