@@ -26,12 +26,8 @@ public class MainActivity extends AppCompatActivity {
 
         createOrder = findViewById(R.id.button_createOrder);
         createOrder.setOnClickListener(new View.OnClickListener() {
-
-
             @Override
             public void onClick(View v) {
-
-
                 if(isNetworkConnected()){
                 Intent intent = new Intent(MainActivity.this, CreateOrderTypes.class);
                 startActivity(intent);
@@ -44,8 +40,10 @@ public class MainActivity extends AppCompatActivity {
         readOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this , ReadOrder.class);
-                startActivity(intent);
+                if(isNetworkConnected()) {
+                    Intent intent = new Intent(MainActivity.this, ReadOrder.class);
+                    startActivity(intent);
+                }
             }
         });
 

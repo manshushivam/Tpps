@@ -39,6 +39,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -76,7 +78,7 @@ public class CreateOrder extends AppCompatActivity {
     String orderType;
 
     String InvoiceNo;
-
+    CircularProgressIndicator cpi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,10 +111,13 @@ public class CreateOrder extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     if (validateFields()) {
+
+
                         try {
 
-                            LinearLayout loadingLayout = findViewById(R.id.loadingLayout);
-                            loadingLayout.setVisibility(View.VISIBLE);
+                             cpi = findViewById(R.id.circularIndicatorPro);
+                             cpi.setIndeterminate(true);
+
 
                             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -137,7 +142,7 @@ public class CreateOrder extends AppCompatActivity {
                                         public void onSuccess(Void aVoid) {
                                             Toast.makeText(getApplicationContext(), "Order Submitted", Toast.LENGTH_SHORT).show();
                                             Log.d(TAG, "DocumentSnapshot added with ID: " + InvoiceNo);
-                                            loadingLayout.setVisibility(View.GONE);
+
                                             sendsms(v);
                                         }
                                     })
@@ -225,14 +230,15 @@ public class CreateOrder extends AppCompatActivity {
                 "--------------------------------------------------------" + "\n\n"+
 
                 "आपका *"+ orderType +"* का ऑर्डर \n " +
-                "जिसका विवरण है - \n *"+orderContent.getText().toString().trim()+ "* \n\n\n "+
-                "वह लगभग *"+ dueDate + "* तक तैयार हो जाएगा ।\n" +
+                "जिसका विवरण है - \n *"+orderContent.getText().toString().trim()+ "* \n\n "+
+
 
                 "                                             कुल राशि: *₹" + totalAmountString + "*\n" +
                 "                                            जमा राशि: *₹" + paidAmountString + "*\n" +
-                "------------------------------------------------------------------" + "\n"+
+                "                                       ---------------------------" + "\n"+
                 "                                         बकाया राशि: *₹" + dueAmountString + "*\n"+
-                "------------------------------------------------------------------" + "\n\n"+
+                "                                       ---------------------------" + "\n"+
+                "वह लगभग *"+ dueDate + "* तक तैयार हो जाएगा ।\n\n" +
                 "यदि आपके पास कोई सवाल या सहायता की आवश्यकता है, तो हमसे संपर्क करें।\n" +
                 "+919572088920\n" +
                 "हम आपकी सेवा करने के लिए तत्पर हैं! " + smileyEmoji + "\n\n" +
