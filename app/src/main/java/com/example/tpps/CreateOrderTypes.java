@@ -19,8 +19,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -44,8 +46,12 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,6 +68,7 @@ public class CreateOrderTypes extends AppCompatActivity {
 
     ImageView image;
     Button btnCamera;
+    ImageButton sync;
     private String currentPhotoPath;
     private String ImageURL;
     FloatingActionButton fabOrderTypes;
@@ -98,21 +105,15 @@ public class CreateOrderTypes extends AppCompatActivity {
             }
         });
 
-//        radioGroupOrderTypes.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(RadioGroup group, int checkedId) {
-//                if (checkedId != -1) {
-//                    RadioButton selectedRadioButton = findViewById(checkedId);
-//                    // Replace the Intent with showing the Bottom Sheet
-//                    showCalendarBottomSheet(selectedRadioButton.getText().toString().trim());
-//                } else {
-//                    Toast.makeText(getApplicationContext(), "Please select an order type", Toast.LENGTH_LONG).show();
-//                }
-//            }
-//        });
-
-        db = FirebaseFirestore.getInstance();
-        ReadOrderFromFirestore();
+        sync = findViewById(R.id.SyncButton);
+        sync.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                db = FirebaseFirestore.getInstance();
+                ReadOrderFromFirestore();
+            }
+        });
+        readOrderTypesFromLocalStorage();
         fabOrderTypes = findViewById(R.id.fabAddOrderTypes);
         fabOrderTypes.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,7 +121,6 @@ public class CreateOrderTypes extends AppCompatActivity {
                 showOrderTypesBottomSheet();
             }
         });
-
     }
     public void showCalendarBottomSheet(FragmentManager fragmentManager, String orderType) {
         CreateOrderCalender bottomSheetFragment = new CreateOrderCalender();
@@ -131,7 +131,6 @@ public class CreateOrderTypes extends AppCompatActivity {
         bottomSheetFragment.setArguments(args);
         bottomSheetFragment.show(fragmentManager, bottomSheetFragment.getTag());
     }
-
     private void showOrderTypesBottomSheet() {
         AddOrderTypes bottomSheetFragment = new AddOrderTypes();
         bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
@@ -211,38 +210,8 @@ public class CreateOrderTypes extends AppCompatActivity {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-//    private void ReadOrderFromFirestore(){
-//
-//        db.collection(MyDB.OrderTypes).get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        dataList = new ArrayList<>();
-//                        if(task.isSuccessful()){
-//                            for (QueryDocumentSnapshot document : task.getResult()){
-//                                OrderTypesModel data = new OrderTypesModel(
-//                                        document.getString("orderType")
-//                                );
-//                                dataList.add(data);
-//                            }
-//                            Toast.makeText(getApplicationContext(), dataList.size(), Toast.LENGTH_SHORT).show();
-//
-//
-//                            // Sort dataList based on the shortest duration between order date and due date
-//                            recyclerView = findViewById(R.id.recyclerViewOrderTypes);
-//                            recyclerView.setLayoutManager(new LinearLayoutManager(CreateOrderTypes.this));
-//                            adapterReadOrderTypes = new AdapterReadOrderTypes(CreateOrderTypes.this, dataList);
-//                            recyclerView.setAdapter(adapterReadOrderTypes);
-//
-//                        }
-//
-//                        else{
-//                            Toast.makeText(getApplicationContext(), "Error" , Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
-//    }
     private void ReadOrderFromFirestore(){
+        try{
         dataList = new ArrayList<>(); // Initialize dataList here
 
         db.collection(MyDB.OrderTypes).get()
@@ -257,7 +226,8 @@ public class CreateOrderTypes extends AppCompatActivity {
                                 dataList.add(data);
                             }
 
-                            // Sort dataList based on the shortest duration between order date and due date
+                            writeOrderTypesFromLocalStorage(dataList);
+                            Collections.sort(dataList, (o1, o2) -> o1.getOrderType().compareToIgnoreCase(o2.getOrderType()));
                             recyclerView = findViewById(R.id.recyclerViewOrderTypes);
                             recyclerView.setLayoutManager(new LinearLayoutManager(CreateOrderTypes.this));
                             adapterReadOrderTypes = new AdapterReadOrderTypes(CreateOrderTypes.this, dataList, getSupportFragmentManager());
@@ -270,6 +240,69 @@ public class CreateOrderTypes extends AppCompatActivity {
                         }
                     }
                 });
+
+
+            }
+        catch (Exception e){
+            Toast.makeText(getApplicationContext(), e.getMessage() , Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void readOrderTypesFromLocalStorage() {
+        try {
+
+            File file = new File(getFilesDir(), "order_types.txt");
+
+            // Initialize a file reader
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            dataList = new ArrayList<>();
+
+            String line;
+
+            while ((line = bufferedReader.readLine()) != null) {
+                // Assuming each line contains an order type
+                OrderTypesModel orderType = new OrderTypesModel(line.trim());
+                dataList.add(orderType);
+            }
+            fileReader.close();
+            Collections.sort(dataList, (o1, o2) -> o1.getOrderType().compareToIgnoreCase(o2.getOrderType()));
+            // Set up RecyclerView with the populated dataList
+            recyclerView = findViewById(R.id.recyclerViewOrderTypes);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            adapterReadOrderTypes = new AdapterReadOrderTypes(this, dataList, getSupportFragmentManager());
+            recyclerView.setAdapter(adapterReadOrderTypes);
+
+        } catch (IOException e) {
+            // Handle any exceptions that may occur during file reading
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Error reading order types from local storage", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void writeOrderTypesFromLocalStorage(List<OrderTypesModel> dataList) {
+        try {
+            // Create a new file named "order_types.txt" in the app's internal storage directory
+            File file = new File(getFilesDir(), "order_types.txt");
+
+            // Initialize a file writer
+            FileWriter fileWriter = new FileWriter(file);
+
+            // Loop through the dataList and write each order type to the file
+            for (OrderTypesModel orderType : dataList) {
+                fileWriter.write(orderType.getOrderType() + "\n");
+                Log.d( "writeOrderTypesFromLocalStorage: Write types" , orderType.getOrderType());
+            }
+            // Close the file writer
+            fileWriter.close();
+
+            // Optionally, you can show a toast message to indicate successful writing
+            Toast.makeText(getApplicationContext(), "Synced With local storage", Toast.LENGTH_SHORT).show();
+
+        } catch (IOException e) {
+            // Handle any exceptions that may occur during file writing
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Error writing order types to local storage", Toast.LENGTH_SHORT).show();
+        }
     }
 
 

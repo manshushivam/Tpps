@@ -7,7 +7,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +27,7 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tpps.Activity.FullScreenImageActivity;
-import com.example.tpps.Activity.FullScreenPDFViwer;
+//import com.example.tpps.Activity.FullScreenPDFViwer;
 import com.example.tpps.Config.MyDB;
 import com.example.tpps.CreateOrder;
 import com.example.tpps.MainActivity;
@@ -309,7 +311,7 @@ public class AdapterReadOrder extends RecyclerView.Adapter<AdapterReadOrder.View
             // textViewTitle = itemView.findViewById(R.id.textViewTitle);
             name = itemView.findViewById(R.id.name_card);
             address = itemView.findViewById(R.id.Address_card);
-            headerLayout = itemView.findViewById(R.id.head);
+            headerLayout = itemView.findViewById(R.id.headCard);
             body = itemView.findViewById(R.id.body);
             bottom = itemView.findViewById(R.id.body);
             image = itemView.findViewById(R.id.imageView_moharBook);
@@ -331,22 +333,40 @@ public class AdapterReadOrder extends RecyclerView.Adapter<AdapterReadOrder.View
 
         public void setStageBackgroundColor(String s) {
             int colorResId;
+            GradientDrawable gradientDrawable = null;
             switch (s) {
                 case "Computer Work":
-                    colorResId = R.color.GreenOfLogo; // Replace with your color resource
+                    gradientDrawable = new GradientDrawable(
+                            GradientDrawable.Orientation.LEFT_RIGHT,
+                            new int[]{Color.parseColor("#099773"), Color.parseColor("#43b692")});
+                    gradientDrawable.setCornerRadius(0f); // Set corner radius if needed
+                    colorResId = R.color.GreenOfLogo; // Use color resource
                     break;
                 case "Printing Work":
-                    colorResId = R.color.BlueOfLogo; // Replace with your color resource
+                    gradientDrawable = new GradientDrawable(
+                            GradientDrawable.Orientation.LEFT_RIGHT,
+                            new int[]{Color.parseColor("#2feaa8"), Color.parseColor("#028cf3")});
+                    gradientDrawable.setCornerRadius(0f); // Set corner radius if needed
+                    colorResId = R.color.BlueOfLogo; // Use color resource
                     break;
                 case "Delivery":
-                    colorResId = R.color.RedOfLogo; // Replace with your color resource
+                    gradientDrawable = new GradientDrawable(
+                            GradientDrawable.Orientation.LEFT_RIGHT,
+                            new int[]{Color.parseColor("#f40752"), Color.parseColor("#f9ab8f")});
+                    gradientDrawable.setCornerRadius(0f); // Set corner radius if needed
+                    colorResId = R.color.RedOfLogo; // Use color resource
                     break;
                 default:
-                    colorResId = R.color.defaultColor; // Replace with your default color resource
+                    gradientDrawable = new GradientDrawable(
+                            GradientDrawable.Orientation.LEFT_RIGHT,
+                            new int[]{Color.parseColor("#e52d27"), Color.parseColor("#b31217")});
+                    gradientDrawable.setCornerRadius(0f); // Set corner radius if needed
+                    colorResId = R.color.defaultColor; // Use default color resource
             }
-                int color = ContextCompat.getColor(itemView.getContext(), colorResId);
-                stage.setBackgroundColor(color);
-                headerLayout.setBackgroundColor(color);
+
+            int color = ContextCompat.getColor(itemView.getContext(), colorResId);
+            LinearLayout linearLayout = itemView.findViewById(R.id.headCard);
+            linearLayout.setBackground(gradientDrawable); // Set the background drawable
         }
     }
 
