@@ -121,6 +121,9 @@ public class ReadOrder extends AppCompatActivity {
             swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
+                    computerWorkCounter = 0;
+                    printingWorkCounter = 0;
+                    deliveryCounter = 0;
                     // Perform refresh operations here
                     // Fetch bills from Firestore
                     dataList.clear(); // Clear existing data
@@ -128,6 +131,8 @@ public class ReadOrder extends AppCompatActivity {
                     ReadOrderFromFirestore();
                     // Stop the refresh animation
                     swipeRefreshLayout.setRefreshing(false);
+
+
 
                     if (radioGroup.getCheckedRadioButtonId() != -1) {
                         // Uncheck the currently checked RadioButton

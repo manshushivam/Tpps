@@ -140,6 +140,7 @@ public class CreateOrder extends AppCompatActivity {
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
+                                            cpi.setIndeterminate(false);
                                             Toast.makeText(getApplicationContext(), "Order Submitted", Toast.LENGTH_SHORT).show();
                                             Log.d(TAG, "DocumentSnapshot added with ID: " + InvoiceNo);
 
@@ -149,6 +150,7 @@ public class CreateOrder extends AppCompatActivity {
                                     .addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
+                                            cpi.setIndeterminate(false);
                                             Toast.makeText(getApplicationContext(), "Error saving image URL to Firestore", Toast.LENGTH_LONG).show();
                                             Log.w(TAG, "Error adding document", e);
                                         }
@@ -234,9 +236,9 @@ public class CreateOrder extends AppCompatActivity {
 
 
                 "                                             कुल राशि: *₹" + totalAmountString + "*\n" +
-                "                                            जमा राशि: *₹" + paidAmountString + "*\n" +
+                "                                             जमा राशि: *₹" + paidAmountString + "*\n" +
                 "                                       ---------------------------" + "\n"+
-                "                                         बकाया राशि: *₹" + dueAmountString + "*\n"+
+                "                                          बकाया राशि: *₹" + dueAmountString + "*\n"+
                 "                                       ---------------------------" + "\n"+
                 "वह लगभग *"+ dueDate + "* तक तैयार हो जाएगा ।\n\n" +
                 "यदि आपके पास कोई सवाल या सहायता की आवश्यकता है, तो हमसे संपर्क करें।\n" +

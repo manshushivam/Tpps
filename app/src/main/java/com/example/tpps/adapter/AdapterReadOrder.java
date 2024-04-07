@@ -201,7 +201,7 @@ public class AdapterReadOrder extends RecyclerView.Adapter<AdapterReadOrder.View
                     Drawable d = v.getContext().getDrawable(R.drawable.tpps_logo);
                     CreatePdf createPdf = new CreatePdf();
                     File pdfPath = createPdf.generatePdf(v.getContext(), d, currentItem);
-                    Toast.makeText(v.getContext(), "File Created" + pdfPath , Toast.LENGTH_SHORT).show();
+                    Toast.makeText(v.getContext(), "Saving in Storage/Documents"  , Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setDataAndType(Uri.parse(pdfPath.toString()), "application/pdf");

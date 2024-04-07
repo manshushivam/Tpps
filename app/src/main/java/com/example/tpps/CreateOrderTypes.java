@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,8 +26,19 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.example.tpps.Config.MyDB;
+import com.example.tpps.adapter.AdapterReadOrder;
+import com.example.tpps.adapter.AdapterReadOrderTypes;
+import com.example.tpps.dataModel.MoharDataModel;
+import com.example.tpps.dataModel.OrderTypesModel;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
@@ -32,24 +46,36 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class CreateOrderTypes extends AppCompatActivity {
+
+
     private int selectedRadioButtonId;
 
     ImageView image;
     Button btnCamera;
-
     private String currentPhotoPath;
-
-
     private String ImageURL;
+    FloatingActionButton fabOrderTypes;
+    private FirebaseFirestore db;
+    private List<OrderTypesModel> dataList;
 
+    private RecyclerView recyclerView;
+    AdapterReadOrderTypes adapterReadOrderTypes;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_order_types);
 
-        RadioGroup radioGroupOrderTypes = findViewById(R.id.radioGroupOrderTypes);
+        //RadioGroup radioGroupOrderTypes = findViewById(R.id.radioGroupOrderTypes);
         image = findViewById(R.id.imageView_bigCOT);
         btnCamera = findViewById(R.id.button_uploadImageCOT);
         btnCamera.setOnClickListener(v -> {
@@ -72,30 +98,45 @@ public class CreateOrderTypes extends AppCompatActivity {
             }
         });
 
-        radioGroupOrderTypes.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+//        radioGroupOrderTypes.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(RadioGroup group, int checkedId) {
+//                if (checkedId != -1) {
+//                    RadioButton selectedRadioButton = findViewById(checkedId);
+//                    // Replace the Intent with showing the Bottom Sheet
+//                    showCalendarBottomSheet(selectedRadioButton.getText().toString().trim());
+//                } else {
+//                    Toast.makeText(getApplicationContext(), "Please select an order type", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
+
+        db = FirebaseFirestore.getInstance();
+        ReadOrderFromFirestore();
+        fabOrderTypes = findViewById(R.id.fabAddOrderTypes);
+        fabOrderTypes.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId != -1) {
-                    RadioButton selectedRadioButton = findViewById(checkedId);
-                    // Replace the Intent with showing the Bottom Sheet
-                    showCalendarBottomSheet(selectedRadioButton.getText().toString().trim());
-                } else {
-                    Toast.makeText(getApplicationContext(), "Please select an order type", Toast.LENGTH_LONG).show();
-                }
+            public void onClick(View view) {
+                showOrderTypesBottomSheet();
             }
         });
+
     }
-    private void showCalendarBottomSheet(String orderType) {
+    public void showCalendarBottomSheet(FragmentManager fragmentManager, String orderType) {
         CreateOrderCalender bottomSheetFragment = new CreateOrderCalender();
         // Pass data to the Bottom Sheet Fragment using arguments
         Bundle args = new Bundle();
         args.putString("orderType", orderType);
         args.putString("ImageURL", ImageURL);
         bottomSheetFragment.setArguments(args);
-
-        bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
+        bottomSheetFragment.show(fragmentManager, bottomSheetFragment.getTag());
     }
 
+    private void showOrderTypesBottomSheet() {
+        AddOrderTypes bottomSheetFragment = new AddOrderTypes();
+        bottomSheetFragment.show(getSupportFragmentManager(), bottomSheetFragment.getTag());
+
+    }
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -169,6 +210,66 @@ public class CreateOrderTypes extends AppCompatActivity {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+//    private void ReadOrderFromFirestore(){
+//
+//        db.collection(MyDB.OrderTypes).get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        dataList = new ArrayList<>();
+//                        if(task.isSuccessful()){
+//                            for (QueryDocumentSnapshot document : task.getResult()){
+//                                OrderTypesModel data = new OrderTypesModel(
+//                                        document.getString("orderType")
+//                                );
+//                                dataList.add(data);
+//                            }
+//                            Toast.makeText(getApplicationContext(), dataList.size(), Toast.LENGTH_SHORT).show();
+//
+//
+//                            // Sort dataList based on the shortest duration between order date and due date
+//                            recyclerView = findViewById(R.id.recyclerViewOrderTypes);
+//                            recyclerView.setLayoutManager(new LinearLayoutManager(CreateOrderTypes.this));
+//                            adapterReadOrderTypes = new AdapterReadOrderTypes(CreateOrderTypes.this, dataList);
+//                            recyclerView.setAdapter(adapterReadOrderTypes);
+//
+//                        }
+//
+//                        else{
+//                            Toast.makeText(getApplicationContext(), "Error" , Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                });
+//    }
+    private void ReadOrderFromFirestore(){
+        dataList = new ArrayList<>(); // Initialize dataList here
+
+        db.collection(MyDB.OrderTypes).get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            for (QueryDocumentSnapshot document : task.getResult()){
+                                OrderTypesModel data = new OrderTypesModel(
+                                        document.getString("orderType")
+                                );
+                                dataList.add(data);
+                            }
+
+                            // Sort dataList based on the shortest duration between order date and due date
+                            recyclerView = findViewById(R.id.recyclerViewOrderTypes);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(CreateOrderTypes.this));
+                            adapterReadOrderTypes = new AdapterReadOrderTypes(CreateOrderTypes.this, dataList, getSupportFragmentManager());
+
+                            recyclerView.setAdapter(adapterReadOrderTypes);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(CreateOrderTypes.this));
+
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Error" , Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
 

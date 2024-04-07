@@ -49,78 +49,49 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.205" />
 
-    <RadioGroup
-        android:id="@+id/radioGroupOrderTypes"
+    <LinearLayout
+        android:id="@+id/container_radio_button_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textViewOrderType"
         android:orientation="vertical"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="25dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/textViewOrderType"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewOrderTypes"
+        android:layout_width="match_parent"
+        android:layout_height="450dp"
+        android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.037"
+        app:layout_constraintHorizontal_bias="0.466"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.704">
+        app:layout_constraintVertical_bias="0.63" />
 
-        <RadioButton
-            android:id="@+id/radioButtonMohar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Standard Mohar"
-            android:textSize="16sp" />
 
-        <RadioButton
-            android:id="@+id/radioButtonSelfMohar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Self Ink Mohar"
-            android:textSize="16sp" />
 
-        <RadioButton
-            android:id="@+id/radioButtonVisitingCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Visiting Card"
-            android:textSize="16sp" />
 
-        <RadioButton
-            android:id="@+id/radioButtonShadiCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Shadi Card"
-            android:textSize="16sp" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddOrderTypes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:contentDescription="add"
+        android:src="@drawable/add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.954"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.976" />
 
-        <RadioButton
-            android:id="@+id/radioButtonCalender"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Calender"
-            android:textSize="16sp" />
 
-        <RadioButton
-            android:id="@+id/radioButtonBanner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Banner"
-            android:textSize="16sp" />
 
-        <RadioButton
-            android:id="@+id/radioButtonPoster"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Poster"
-            android:textSize="16sp" />
-
-        <RadioButton
-            android:id="@+id/radioButtonOther"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Others"
-            android:textSize="16sp" />
-
-    </RadioGroup>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

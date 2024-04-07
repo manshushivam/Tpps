@@ -20,18 +20,13 @@ public class CreateOrderCalender extends BottomSheetDialogFragment {
     private String imageURL;
     private String orderType;
 
-
-
     public CreateOrderCalender() {
         // Required empty public constructor
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         return inflater.inflate(R.layout.activity_create_order_calender, container, false);
     }
-
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -64,4 +59,5 @@ public class CreateOrderCalender extends BottomSheetDialogFragment {
             orderType = args.getString("orderType");
         }
     }
+
 }

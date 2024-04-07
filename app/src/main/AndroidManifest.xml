@@ -24,6 +24,9 @@
         android:theme="@style/Theme.Tpps"
         tools:targetApi="31">
         <activity
+            android:name=".AddOrderTypes"
+            android:exported="false" />
+        <activity
             android:name=".Activity.FullScreenPDFViwer"
             android:exported="false" />
         <activity
@@ -72,8 +75,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/pdf_paths" />
         </provider>
-
-
     </application>
 
 </manifest>
