@@ -2,15 +2,22 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    
+    <!-- Brand Colors -->
     <color name="ComputerWork">#f6b93b</color>
     <color name="PrintingWork">#0C2D57</color>
     <color name="Deliver">#b71540</color>
     <color name="defaultColor">#82ccdd</color>
-    <color name="colorPrimaryDark">#1976D2</color>
+    
+    <!-- Primary Colors -->
     <color name="GreenOfLogo">#3da558</color>
     <color name="BlueOfLogo">#4982c7</color>
     <color name="RedOfLogo">#f64524</color>
 
-
-
+    <!-- UI Semantic Colors (Light) -->
+    <color name="backgroundColor">#F8F9FA</color>
+    <color name="surfaceColor">#FFFFFF</color>
+    <color name="textColorPrimary">#212121</color>
+    <color name="textColorSecondary">#757575</color>
+    <color name="dividerColor">#E0E0E0</color>
 </resources>

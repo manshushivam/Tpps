@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FFFFFFFF</color>
+    <color name="white">#FF121212</color>
+
+    <!-- UI Semantic Colors (Dark) -->
+    <color name="backgroundColor">#121212</color>
+    <color name="surfaceColor">#1E1E1E</color>
+    <color name="textColorPrimary">#E1E1E1</color>
+    <color name="textColorSecondary">#B0B0B0</color>
+    <color name="dividerColor">#333333</color>
+    
+    <!-- Adjust logo colors for better visibility in dark mode if needed -->
+    <color name="BlueOfLogo">#6BA4E7</color> 
+    <color name="GreenOfLogo">#4CAF50</color>
+</resources>
